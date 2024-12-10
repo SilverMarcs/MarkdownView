@@ -5,13 +5,17 @@
 import SwiftUI
 
 public struct InlineMarkupContentView: View {
-  @Environment(\.font) var font
+    @Environment(\.font) var font
+    public let inlineContents: [InlineMarkupContent]
+    public let searchText: String
 
-  public let inlineContents: [InlineMarkupContent]
-
-  public init(inlineContents: [InlineMarkupContent]) {
-    self.inlineContents = inlineContents
-  }
+    public init(
+        inlineContents: [InlineMarkupContent],
+        searchText: String = ""
+    ) {
+        self.inlineContents = inlineContents
+        self.searchText = searchText
+    }
 
   var contents: [[MultiContent]] {
     var container = AttributeContainer()
@@ -21,10 +25,11 @@ public struct InlineMarkupContentView: View {
     }
 
     return contents.map { content in
-      let multiContents = MultiContentParser.multiContents(
-        contents: content,
-        container: container
-      ) { _, container in return container }
+        let multiContents = MultiContentParser.multiContents(
+            contents: content,
+            container: container,
+            searchText: searchText
+        ) { _, container in return container }
       let compressedMultiContents = MultiContentParser.compressMultiContents(
         multiContents: multiContents)
       return compressedMultiContents

@@ -44,7 +44,7 @@ public struct OrderedListView: View {
             if item.children.count > 1 {
               ForEach(1..<item.children.count, id: \.self) { i in
                 let child = item.children[i]
-                HStack(alignment: .center, spacing: 5) {
+                HStack(alignment: .top, spacing: 5) {
                   Spacer().frame(width: 10)
                   MarkupContentView(content: child)
                     .environment(\.listDepth, listDepth + 1)
@@ -53,7 +53,7 @@ public struct OrderedListView: View {
             }
           }
         } else {
-          HStack(alignment: .center, spacing: 5) {
+          HStack(alignment: .top, spacing: 5) {
             SwiftUI.Text("\(Int(startIndex) + index).")
             ForEach(item.children.indexed(), id: \.index) { _, child in
               MarkupContentView(content: child)
@@ -80,34 +80,34 @@ public struct OrderedListView: View {
   }
 }
 
-#Preview {
-  let orderedList = OrderedList(
-    (1..<6).map { i in
-      ListItem(Paragraph([Markdown.Text("Hello\(i)")]))
-    })
-
-  let document = Document([orderedList])
-
-  return List {
-    MarkdownView(document: document)
-  }
-}
-
-#Preview {
-  let document = Document(
-    parsing: """
-1. First list item
-   - First nested list item
-     - Second nested list item
-     - Second nested list item
-1. Item1
-1. Item2
-1. Item4
-""")
-
-  return ScrollView {
-    LazyVStack(alignment: .leading, spacing: 10) {
-      MarkdownView(document: document)
-    }
-  }
-}
+//#Preview {
+//  let orderedList = OrderedList(
+//    (1..<6).map { i in
+//      ListItem(Paragraph([Markdown.Text("Hello\(i)")]))
+//    })
+//
+//  let document = Document([orderedList])
+//
+//  return List {
+//    MarkdownView(document: document)
+//  }
+//}
+//
+//#Preview {
+//  let document = Document(
+//    parsing: """
+//1. First list item
+//   - First nested list item
+//     - Second nested list item
+//     - Second nested list item
+//1. Item1
+//1. Item2
+//1. Item4
+//""")
+//
+//  return ScrollView {
+//    LazyVStack(alignment: .leading, spacing: 10) {
+//      MarkdownView(document: document)
+//    }
+//  }
+//}

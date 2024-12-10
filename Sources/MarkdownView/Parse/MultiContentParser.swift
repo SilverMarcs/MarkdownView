@@ -9,20 +9,24 @@ public enum MultiContent: Hashable, Sendable {
   case image(title: String, source: String?, link: URL?)
   case inlineHTML(html: String, link: URL?)
 }
-
 public enum MultiContentParser {
-  public static func multiContents(
-    contents: some Sequence<InlineMarkupContent>,
-    container: AttributeContainer,
-    customAttribute: (String, AttributeContainer) -> AttributeContainer
-  ) -> [MultiContent] {
-    var multiContents: [MultiContent] = []
+    public static func multiContents(
+        contents: some Sequence<InlineMarkupContent>,
+        container: AttributeContainer,
+        searchText: String = "",
+        customAttribute: (String, AttributeContainer) -> AttributeContainer
+    ) -> [MultiContent] {
+        var multiContents: [MultiContent] = []
 
-    for content in contents {
-      switch content {
-      case .text(let text):
-        let attributedString = AttributedString(text, attributes: container)
-        multiContents.append(.attributedString(attributedString))
+        for content in contents {
+            switch content {
+            case .text(let text):
+                let attributedString = createHighlightedString(
+                    text: text,
+                    highlightedText: searchText,
+                    baseContainer: container
+                )
+                multiContents.append(.attributedString(attributedString))
       case .strong(let children):
         var container = container
         container.font = .bold(container.font ?? .body)()
@@ -113,4 +117,29 @@ public enum MultiContentParser {
 
     return multiContents
   }
+    
+    private static func createHighlightedString(
+        text: String,
+        highlightedText: String,
+        baseContainer: AttributeContainer
+    ) -> AttributedString {
+        var attributedString = AttributedString(text, attributes: baseContainer)
+        
+        if !highlightedText.isEmpty {
+            let lowercasedHighlight = highlightedText.lowercased()
+            var searchRange = attributedString.startIndex..<attributedString.endIndex
+            
+            while let range = attributedString[searchRange].range(of: lowercasedHighlight, options: .caseInsensitive) {
+                attributedString[range].backgroundColor = .yellow
+                attributedString[range].foregroundColor = .black
+                
+                if range.upperBound >= searchRange.upperBound {
+                    break
+                }
+                searchRange = range.upperBound..<searchRange.upperBound
+            }
+        }
+        
+        return attributedString
+    }
 }

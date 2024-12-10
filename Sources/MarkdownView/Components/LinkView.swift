@@ -47,15 +47,15 @@ public struct LinkView: View {
       .text(text: "Apple Link")
     ])
 }
-
-#Preview {
-  let link = Markdown.Link(destination: "https://apple.com", [Markdown.Text("Apple Link")])
-  let document = Markdown.Document([Paragraph(link)])
-  return MarkdownView(document: document)
-}
-
-#Preview {
-  let document = Document(parsing: "[Apple Link](https://apple.com)")
-
-  return MarkdownView(document: document)
-}
+//
+//#Preview {
+//  let link = Markdown.Link(destination: "https://apple.com", [Markdown.Text("Apple Link")])
+//  let document = Markdown.Document([Paragraph(link)])
+//  return MarkdownView(document: document)
+//}
+//
+//#Preview {
+//  let document = Document(parsing: "[Apple Link](https://apple.com)")
+//
+//  return MarkdownView(document: document)
+//}

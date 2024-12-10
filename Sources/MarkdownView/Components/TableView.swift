@@ -98,42 +98,42 @@ extension View {
   )
   .padding(10)
 }
-
-#Preview {
-  let table = Markdown.Table(
-    header: .init([
-      Markdown.Table.Cell([Markdown.Text("Head1")]),
-      Markdown.Table.Cell([Markdown.Text("Head2")]),
-      Markdown.Table.Cell([Markdown.Text("Head3")]),
-    ]),
-    body: .init([
-      .init([
-        Markdown.Table.Cell([Markdown.Text("Body1")]),
-        Markdown.Table.Cell([Markdown.Text("Body2")]),
-        Markdown.Table.Cell([Markdown.Text("Body3")]),
-      ]),
-      .init([
-        Markdown.Table.Cell([Markdown.Text("Body4")]),
-        Markdown.Table.Cell([Markdown.Text("Body5")]),
-        Markdown.Table.Cell([Markdown.Text("Body6")]),
-      ]),
-    ])
-  )
-
-  let document = Document([table])
-
-  return MarkdownView(document: document).padding(10)
-}
-
-#Preview {
-  let document = Document(
-    parsing: """
-| Head1 | Head2 | Head3 |
-| ----- | ----- | ----- |
-| Body1 | Body2 | Body3 |
-| Body4 | Body5 | Body6 |
-| Body7 | Body8 | Body9 |
-""")
-
-  return MarkdownView(document: document).padding(50)
-}
+//
+//#Preview {
+//  let table = Markdown.Table(
+//    header: .init([
+//      Markdown.Table.Cell([Markdown.Text("Head1")]),
+//      Markdown.Table.Cell([Markdown.Text("Head2")]),
+//      Markdown.Table.Cell([Markdown.Text("Head3")]),
+//    ]),
+//    body: .init([
+//      .init([
+//        Markdown.Table.Cell([Markdown.Text("Body1")]),
+//        Markdown.Table.Cell([Markdown.Text("Body2")]),
+//        Markdown.Table.Cell([Markdown.Text("Body3")]),
+//      ]),
+//      .init([
+//        Markdown.Table.Cell([Markdown.Text("Body4")]),
+//        Markdown.Table.Cell([Markdown.Text("Body5")]),
+//        Markdown.Table.Cell([Markdown.Text("Body6")]),
+//      ]),
+//    ])
+//  )
+//
+//  let document = Document([table])
+//
+//  return MarkdownView(document: document).padding(10)
+//}
+//
+//#Preview {
+//  let document = Document(
+//    parsing: """
+//| Head1 | Head2 | Head3 |
+//| ----- | ----- | ----- |
+//| Body1 | Body2 | Body3 |
+//| Body4 | Body5 | Body6 |
+//| Body7 | Body8 | Body9 |
+//""")
+//
+//  return MarkdownView(document: document).padding(50)
+//}

@@ -46,13 +46,10 @@ public struct BlockDirectiveView: View {
   }
 }
 """
-  
-
-  let document = Document(parsing: markdown, options: [.parseBlockDirectives])
 
   return ScrollView {
     LazyVStack(alignment: .leading, spacing: 10) {
-      MarkdownView(document: document)
+        MarkdownView(content: markdown)
     }
   }
 }

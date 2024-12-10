@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
   name: "MarkdownView",
   platforms: [
-    .macOS(.v13),
-    .iOS(.v16),
+    .macOS(.v14),
+    .iOS(.v17),
     .watchOS(.v10),
     .tvOS(.v16),
     .visionOS(.v1),
@@ -21,14 +21,14 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-markdown", from: "0.5.0"),
-    .package(url: "https://github.com/apple/swift-algorithms", from: "1.0.0"),
+    .package(url: "https://github.com/SilverMarcs/HighlightSwift", .branch("main")),
   ],
   targets: [
     .target(
       name: "MarkdownView",
       dependencies: [
         .product(name: "Markdown", package: "swift-markdown"),
-        .product(name: "Algorithms", package: "swift-algorithms"),
+        .product(name: "HighlightSwift", package: "HighlightSwift"),
       ]
     ),
     .testTarget(

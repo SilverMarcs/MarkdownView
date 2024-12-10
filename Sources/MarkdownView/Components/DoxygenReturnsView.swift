@@ -33,7 +33,7 @@ public struct DoxygenReturnsView: View {
 
   return ScrollView {
     LazyVStack(alignment: .leading) {
-      MarkdownView(document: document)
+        MarkdownView(content: source)
     }
   }
 }

@@ -2,114 +2,117 @@
 //  CodeBlockView.swift
 //
 
-import Markdown
 import SwiftUI
+import HighlightSwift
 
-public struct CodeBlockView: View {
-  public let language: String?
-  public let sourceCode: String
-  public let cornerRadius: CGFloat = 8
-
-  public var fileName: String.SubSequence? {
-    language?.split(separator: ":", maxSplits: 1)[safe: 1]
-  }
-
-  public init(
-    language: String?,
-    sourceCode: String
-  ) {
-    self.language = language
-    var sourceCode = sourceCode
-
-    if !sourceCode.suffix(2).allSatisfy(\.isNewline) && sourceCode.last?.isNewline == true {
-      sourceCode.removeLast()
+struct CodeBlockView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
+    let language: String?
+    let sourceCode: String
+    let searchText: String
+    @State var id = UUID()
+    
+    init(language: String? = nil, sourceCode: String, searchText: String = "") {
+        self.sourceCode = sourceCode.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.language = language
+        self.searchText = searchText
     }
-
-    self.sourceCode = sourceCode
-  }
-
-  var copyButton: some View {
-    Button {
-      #if canImport(AppKit)
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(sourceCode, forType: .string)
-      #else
-        UIPasteboard.general.string = sourceCode
-      #endif
-    } label: {
-      Image(systemName: "clipboard")
-        .foregroundStyle(.gray)
+    
+    var body: some View {
+        VStack(alignment: .trailing, spacing: 0) {
+            
+            CodeText(sourceCode)
+                .codeTextColors(.theme(.atomOne))
+                .highlightedString(searchText)
+                .padding()
+                
+            CustomCopyButton(content: sourceCode)
+                .padding(5)
+                .offset(y: -30) // Adjust this value as needed
+                .padding(.bottom, -30) // This counteracts the offset to prevent extra space
+            
+        }
+        .roundedRectangleOverlay(radius: 6)
+        .background(color.opacity(0.05), in: RoundedRectangle(cornerRadius: 6))
+        .onChange(of: sourceCode) { _ in
+            id = UUID()
+        }
     }
-  }
+    
+    
+    var color: Color {
+        colorScheme == .dark ? .black : .gray
+    }
+}
 
-  public var body: some View {
-    VStack(alignment: .leading, spacing: 0) {
-      if let fileName {
-        SwiftUI.Text(fileName.trimming(while: \.isWhitespace))
-          .padding(.horizontal, 5)
-          .padding(.vertical, 2)
-          .foregroundStyle(.background)
-          .background(
-            .foreground.opacity(0.5),
-            in: CustomRoundedRectangle(
-              topLeftRadius: cornerRadius,
-              topRightRadius: cornerRadius,
-              bottomLeftRadius: 0,
-              bottomRightRadius: 0
+struct CustomCopyButton: View {
+    @State var clicked = false
+    var content: String
+    
+    var body: some View {
+        Button {
+            withAnimation {
+                clicked = true
+            }
+            content.copyToPasteboard()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                withAnimation {
+                    clicked = false
+                }
+            }
+        } label: {
+            Image(systemName: clicked ? "checkmark" : "square.on.square")
+                .imageScale(.medium)
+                .bold()
+                .frame(width: 12, height: 12)
+                .padding(7)
+                .contentShape(Rectangle())
+        }
+        .contentTransition(.symbolEffect(.replace))
+        .buttonStyle(.borderless)
+    }
+}
+
+extension View {
+    func roundedRectangleOverlay(radius: CGFloat = 20, opacity: CGFloat = 0.8) -> some View {
+        self.modifier(RoundedRectangleOverlayModifier(radius: radius, opacity: opacity))
+    }
+}
+
+
+struct RoundedRectangleOverlayModifier: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+    var radius: CGFloat = 20
+    var opacity: CGFloat = 0.8
+    
+    func body(content: Content) -> some View {
+        content
+            .overlay(
+                RoundedRectangle(cornerRadius: radius)
+                #if os(macOS)
+                    .stroke(.tertiary, lineWidth: 0.6)
+                #elseif os(visionOS)
+                    .stroke(Color(.quaternaryLabel), lineWidth: 1)
+                #else
+                    .stroke(colorScheme == .dark ? Color(.tertiarySystemGroupedBackground) : Color(.tertiaryLabel), lineWidth: 1)
+                #endif
+                    .opacity(opacity)
             )
-          )
-      }
-      SwiftUI.Text(sourceCode)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(10)
-        .foregroundStyle(.background)
-        .background {
-          CustomRoundedRectangle(
-            topLeftRadius: fileName == nil ? cornerRadius : 0,
-            topRightRadius: cornerRadius,
-            bottomLeftRadius: cornerRadius,
-            bottomRightRadius: cornerRadius
-          )
-          .foregroundStyle(.foreground)
-        }
-        .overlay(alignment: .topTrailing) {
-          copyButton
-            .padding(10)
-        }
     }
-  }
 }
 
-#Preview {
-  CodeBlockView(
-    language: "swift: Sample.swift",
-    sourceCode: """
-      import Foundation
-      print(Date.now)
-      """)
-}
 
-#Preview {
-  let codeBlock = CodeBlock(
-    language: "swift: Sample.swift",
-    """
-    import Foundation
-    print(Date.now)
-    """)
-
-  let document = Document([codeBlock])
-
-  return MarkdownView(document: document)
-}
-
-#Preview {
-  let document = Document(
-    parsing: """
-```swift: Sample.swift
-import Foundation
-print(Date.now)
-```
-""")
-
-  return MarkdownView(document: document)
+extension String {
+    static let bottomID = "bottomID"
+    static let testPrompt = "Respond with just the word Test"
+    
+    func copyToPasteboard() {
+        #if os(macOS)
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(self, forType: .string)
+        #else
+        UIPasteboard.general.string = self
+        #endif
+    }
 }

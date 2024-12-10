@@ -52,33 +52,33 @@ public struct HeadingView: View {
   }
 }
 
-#Preview {
-  let document = Document(
-    (1..<6).map { i in
-      Heading(
-        level: i,
-        [
-          Markdown.Text("Title\(i)")
-        ]
-      )
-    })
-
-  return VStack {
-    MarkdownView(document: document)
-  }
-}
-
-#Preview {
-  let document = Document(
-    parsing: """
-# Title1 [Apple Link](https://apple.com) `code` *italic*
-## Title2
-### Title3
-#### Title4
-##### Title5
-""")
-
-  return VStack {
-    MarkdownView(document: document)
-  }
-}
+//#Preview {
+//  let document = Document(
+//    (1..<6).map { i in
+//      Heading(
+//        level: i,
+//        [
+//          Markdown.Text("Title\(i)")
+//        ]
+//      )
+//    })
+//
+//  return VStack {
+//    MarkdownView(document: document)
+//  }
+//}
+//
+//#Preview {
+//  let document = Document(
+//    parsing: """
+//# Title1 [Apple Link](https://apple.com) `code` *italic*
+//## Title2
+//### Title3
+//#### Title4
+//##### Title5
+//""")
+//
+//  return VStack {
+//      MarkdownView(content: source)
+//  }
+//}

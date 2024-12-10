@@ -2,17 +2,20 @@
 //  MarkupContentView.swift
 //
 
-import Algorithms
 import SwiftUI
 
 public struct MarkupContentView: View {
-  public let content: MarkupContent
+    public let content: MarkupContent
+    public let searchText: String
 
-  public init(
-    content: MarkupContent
-  ) {
-    self.content = content
-  }
+    public init(
+        content: MarkupContent,
+        searchText: String = ""
+    ) {
+        self.content = content
+        self.searchText = searchText
+    }
+
 
   public var body: some View {
     switch content {
@@ -23,13 +26,13 @@ public struct MarkupContentView: View {
     case .inlineCode(let code):
       InlineCodeView(code: code)
     case .strong(let children):
-      InlineMarkupContentView(inlineContents: children)
+        InlineMarkupContentView(inlineContents: children, searchText: searchText)
         .bold()
     case .strikethrough(let children):
-      InlineMarkupContentView(inlineContents: children)
+        InlineMarkupContentView(inlineContents: children, searchText: searchText)
         .strikethrough(pattern: .dash, color: .secondary)
     case .emphasis(let children):
-      InlineMarkupContentView(inlineContents: children)
+        InlineMarkupContentView(inlineContents: children, searchText: searchText)
         .italic()
     case .doxygenParameter(let name, let children):
       DoxygenParameterView(name: name, children: children)
@@ -40,13 +43,14 @@ public struct MarkupContentView: View {
     case .htmlBlock(let html):
       HTMLView(html: html)
     case .codeBlock(let language, let sourceCode):
-      CodeBlockView(language: language, sourceCode: sourceCode)
+      CodeBlockView(language: language, sourceCode: sourceCode, searchText: searchText)
+        .id(sourceCode)
     case .link(let destination, let title, let children):
       LinkView(destination: destination, title: title, children: children)
     case .heading(let level, let children):
       HeadingView(level: level, children: children)
     case .paragraph(let children):
-      InlineMarkupContentView(inlineContents: children)
+        InlineMarkupContentView(inlineContents: children, searchText: searchText)
     case .blockQuote(let kind, let children):
       BlockQuoteView(kind: kind, children: children)
     case .orderedList(let startIndex, let items):
