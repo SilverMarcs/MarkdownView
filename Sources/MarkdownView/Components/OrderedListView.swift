@@ -55,7 +55,8 @@ public struct OrderedListView: View {
         } else {
           HStack(alignment: .top, spacing: 5) {
             SwiftUI.Text("\(Int(startIndex) + index).")
-            ForEach(item.children.indexed(), id: \.index) { _, child in
+//            ForEach(item.children.indexed(), id: \.index) { _, child in
+              ForEach(item.children, id: \.self) { child in
               MarkupContentView(content: child)
             }
           }

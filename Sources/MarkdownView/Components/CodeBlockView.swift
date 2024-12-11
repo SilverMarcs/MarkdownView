@@ -21,7 +21,6 @@ struct CodeBlockView: View {
     
     var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
-
             Group {
                 if highlightCode {
                     CodeText(sourceCode)
