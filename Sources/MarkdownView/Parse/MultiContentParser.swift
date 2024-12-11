@@ -6,6 +6,7 @@ import Foundation
 
 public enum MultiContent: Hashable, Sendable {
   case attributedString(AttributedString)
+  case latex(String)
   case image(title: String, source: String?, link: URL?)
   case inlineHTML(html: String, link: URL?)
 }
@@ -93,6 +94,8 @@ public enum MultiContentParser {
         continue
       case .inlineHTML(let html):
         multiContents.append(.inlineHTML(html: html, link: container.link))
+      case .latex(let text):
+        multiContents.append(.latex(text))
       }
     }
 

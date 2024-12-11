@@ -3,6 +3,7 @@
 //
 
 import SwiftUI
+import LaTeXSwiftUI
 
 public struct InlineMarkupContentView: View {
     @Environment(\.font) var font
@@ -40,6 +41,12 @@ public struct InlineMarkupContentView: View {
         switch content {
         case .attributedString(let string):
           Text(string)
+        case .latex(let latex):
+            LaTeX(latex)
+                .renderingStyle(.original)
+                .renderingAnimation(.easeIn)
+                .frame(height: 65)
+                .scrollDisabled(true)
         case .image(let title, let source, let link):
           if let imageURL = source.map({ URL(string: $0) }),
             let imageURL

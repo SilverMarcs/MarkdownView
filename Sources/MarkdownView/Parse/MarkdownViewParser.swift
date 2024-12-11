@@ -19,7 +19,8 @@ public enum MarkdownViewParser {
     case let image as Markdown.Image:
       return .image(title: image.plainText, source: image.source)
     case let text as Markdown.Text:
-      return .text(text: text.string)
+        let (parsedText, isLatex) = Self.parseLatex(text: text.string)
+        return isLatex ? .latex(text: parsedText) : .text(text: parsedText)
     case let inlineAttributes as Markdown.InlineAttributes:
       let children = inlineAttributes.inlineChildren.map { inlineMarkupContent(markup: $0) }
       return .inlineAttributes(attributes: inlineAttributes.attributes, children: Array(children))
@@ -148,4 +149,30 @@ public enum MarkdownViewParser {
       fatalError()
     }
   }
+    
+    private static func parseLatex(text: String) -> (String, Bool) {
+        // Common LaTeX delimiters patterns
+        let patterns = [
+            // Display math mode
+            #"\$\$(.*?)\$\$"#,           // $$...$$
+            #"\\\[(.*?)\\\]"#,           // \[...\]
+            
+            // Equation environments
+            #"\\begin\{equation\*?\}(.*?)\\end\{equation\*?\}"#,  // \begin{equation}...\end{equation}
+            #"\\begin\{align\*?\}(.*?)\\end\{align\*?\}"#,        // \begin{align}...\end{align}
+            
+            // Inline math mode
+            #"\$(.*?)\$"#,               // $...$
+            #"\\\((.*?)\\\)"#            // \(...\)
+        ]
+        
+        // Check each pattern
+        for pattern in patterns {
+            if let _ = text.range(of: pattern, options: [.regularExpression, .caseInsensitive]) {
+                return (text, true)
+            }
+        }
+        
+        return (text, false)
+    }
 }

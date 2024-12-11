@@ -25,6 +25,7 @@ public enum MarkupContent: Hashable, Sendable {
   case strong(children: [InlineMarkupContent])
   case strikethrough(children: [InlineMarkupContent])
   case inlineCode(code: String)
+//  case latex(text: String)
 }
 
 extension Aside.Kind: @retroactive @unchecked Sendable, @retroactive Hashable {}
