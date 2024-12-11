@@ -6,26 +6,33 @@ import SwiftUI
 import HighlightSwift
 
 struct CodeBlockView: View {
+    @Environment(\.highlightCode) var highlightCode
+    @Environment(\.codeBlockFontSize) var codeBlockFontSize
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.searchText) private var searchText
     
     let language: String?
     let sourceCode: String
-    let searchText: String
-    @State var id = UUID()
     
-    init(language: String? = nil, sourceCode: String, searchText: String = "") {
+    init(language: String? = nil, sourceCode: String) {
         self.sourceCode = sourceCode.trimmingCharacters(in: .whitespacesAndNewlines)
         self.language = language
-        self.searchText = searchText
     }
     
     var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
-            
-            CodeText(sourceCode)
-                .codeTextColors(.theme(.atomOne))
-                .highlightedString(searchText)
-                .padding()
+
+            Group {
+                if highlightCode {
+                    CodeText(sourceCode)
+                        .codeTextColors(.theme(.atomOne))
+                        .highlightedString(searchText)
+                } else {
+                    Text(sourceCode)
+                }
+            }
+            .font(.system(size: codeBlockFontSize, weight: .regular, design: .monospaced))
+            .padding()
                 
             CustomCopyButton(content: sourceCode)
                 .padding(5)
@@ -35,9 +42,6 @@ struct CodeBlockView: View {
         }
         .roundedRectangleOverlay(radius: 6)
         .background(color.opacity(0.05), in: RoundedRectangle(cornerRadius: 6))
-        .onChange(of: sourceCode) { _ in
-            id = UUID()
-        }
     }
     
     
@@ -74,6 +78,7 @@ struct CustomCopyButton: View {
     }
 }
 
+
 extension View {
     func roundedRectangleOverlay(radius: CGFloat = 20, opacity: CGFloat = 0.8) -> some View {
         self.modifier(RoundedRectangleOverlayModifier(radius: radius, opacity: opacity))
@@ -104,9 +109,6 @@ struct RoundedRectangleOverlayModifier: ViewModifier {
 
 
 extension String {
-    static let bottomID = "bottomID"
-    static let testPrompt = "Respond with just the word Test"
-    
     func copyToPasteboard() {
         #if os(macOS)
         NSPasteboard.general.clearContents()

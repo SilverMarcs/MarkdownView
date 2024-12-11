@@ -5,20 +5,15 @@
 import SwiftUI
 
 public struct MarkupContentView: View {
+    @Environment(\.searchText) private var searchText
     public let content: MarkupContent
-    public let searchText: String
 
-    public init(
-        content: MarkupContent,
-        searchText: String = ""
-    ) {
+    public init(content: MarkupContent) {
         self.content = content
-        self.searchText = searchText
     }
 
-
-  public var body: some View {
-    switch content {
+    public var body: some View {
+        switch content {
     case .text(let text):
       SwiftUI.Text(text)
     case .thematicBreak:
@@ -26,13 +21,13 @@ public struct MarkupContentView: View {
     case .inlineCode(let code):
       InlineCodeView(code: code)
     case .strong(let children):
-        InlineMarkupContentView(inlineContents: children, searchText: searchText)
+      InlineMarkupContentView(inlineContents: children)
         .bold()
     case .strikethrough(let children):
-        InlineMarkupContentView(inlineContents: children, searchText: searchText)
+      InlineMarkupContentView(inlineContents: children)
         .strikethrough(pattern: .dash, color: .secondary)
     case .emphasis(let children):
-        InlineMarkupContentView(inlineContents: children, searchText: searchText)
+      InlineMarkupContentView(inlineContents: children)
         .italic()
     case .doxygenParameter(let name, let children):
       DoxygenParameterView(name: name, children: children)
@@ -43,14 +38,13 @@ public struct MarkupContentView: View {
     case .htmlBlock(let html):
       HTMLView(html: html)
     case .codeBlock(let language, let sourceCode):
-      CodeBlockView(language: language, sourceCode: sourceCode, searchText: searchText)
-        .id(sourceCode)
+      CodeBlockView(language: language, sourceCode: sourceCode)
     case .link(let destination, let title, let children):
       LinkView(destination: destination, title: title, children: children)
     case .heading(let level, let children):
       HeadingView(level: level, children: children)
     case .paragraph(let children):
-        InlineMarkupContentView(inlineContents: children, searchText: searchText)
+        InlineMarkupContentView(inlineContents: children)
     case .blockQuote(let kind, let children):
       BlockQuoteView(kind: kind, children: children)
     case .orderedList(let startIndex, let items):

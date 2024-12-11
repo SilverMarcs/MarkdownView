@@ -6,15 +6,11 @@ import SwiftUI
 
 public struct InlineMarkupContentView: View {
     @Environment(\.font) var font
+    @Environment(\.searchText) var searchText
     public let inlineContents: [InlineMarkupContent]
-    public let searchText: String
 
-    public init(
-        inlineContents: [InlineMarkupContent],
-        searchText: String = ""
-    ) {
+    public init(inlineContents: [InlineMarkupContent]) {
         self.inlineContents = inlineContents
-        self.searchText = searchText
     }
 
   var contents: [[MultiContent]] {
