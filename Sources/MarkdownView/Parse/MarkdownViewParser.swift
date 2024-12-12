@@ -151,6 +151,11 @@ public enum MarkdownViewParser {
   }
     
     private static func parseLatex(text: String) -> (String, Bool) {
+        // Quick check before regex
+        if !text.contains("$") && !text.contains("\\") {
+            return (text, false)
+        }
+        
         // Common LaTeX delimiters patterns
         let patterns = [
             // Display math mode
@@ -162,7 +167,7 @@ public enum MarkdownViewParser {
             #"\\begin\{align\*?\}(.*?)\\end\{align\*?\}"#,        // \begin{align}...\end{align}
             
             // Inline math mode
-            #"\$(.*?)\$"#,               // $...$
+//            #"\$(.*?)\$"#,               // $...$
             #"\\\((.*?)\\\)"#            // \(...\)
         ]
         
