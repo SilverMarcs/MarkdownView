@@ -71,6 +71,8 @@ public enum MultiContentParser {
       case .inlineCode(let code):
         var container = container
         container.backgroundColor = .code
+                // monospaced font
+                container.font = .monospaced(container.font ?? .body)().width(.compressed)
         let attributedString = AttributedString(code, attributes: container)
         multiContents.append(.attributedString(attributedString))
       case .symbolLink(let destination):

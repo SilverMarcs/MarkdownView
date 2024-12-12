@@ -43,5 +43,6 @@ public struct UnorderedListView: View {
         }
       }
     }
+    .padding(.leading, 8)
   }
 }

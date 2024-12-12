@@ -22,6 +22,8 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/apple/swift-markdown", from: "0.5.0"),
     .package(url: "https://github.com/SilverMarcs/HighlightSwift", branch: "main"),
+    .package(url: "https://github.com/colinc86/LaTeXSwiftUI", from: "1.3.2"),
+    
   ],
   targets: [
     .target(
@@ -29,6 +31,7 @@ let package = Package(
       dependencies: [
         .product(name: "Markdown", package: "swift-markdown"),
         .product(name: "HighlightSwift", package: "HighlightSwift"),
+        .product(name: "LaTeXSwiftUI", package: "LaTeXSwiftUI"),
       ]
     ),
     .testTarget(

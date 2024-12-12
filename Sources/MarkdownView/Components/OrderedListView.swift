@@ -63,6 +63,7 @@ public struct OrderedListView: View {
         }
       }
     }
+    .padding(.leading, 12)
   }
 }
 
