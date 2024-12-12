@@ -34,9 +34,7 @@ public struct InlineMarkupContentView: View {
   }
 
   public var body: some View {
-//    ForEach(contents.indexed(), id: \.index) { _, element in
       ForEach(contents, id: \.self) { element in
-//      ForEach(element.indexed(), id: \.index) { _, content in
         ForEach(element, id: \.self) { content in
         switch content {
         case .attributedString(let string):
@@ -45,8 +43,10 @@ public struct InlineMarkupContentView: View {
             LaTeX(latex)
                 .renderingStyle(.original)
                 .renderingAnimation(.easeIn)
-                .frame(height: 65)
+                .frame(height: 45)
                 .scrollDisabled(true)
+                .padding(.top, -10)
+//                .border(.red)
         case .image(let title, let source, let link):
           if let imageURL = source.map({ URL(string: $0) }),
             let imageURL

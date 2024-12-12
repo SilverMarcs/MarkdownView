@@ -19,8 +19,8 @@ public enum MarkdownViewParser {
     case let image as Markdown.Image:
       return .image(title: image.plainText, source: image.source)
     case let text as Markdown.Text:
-        let (parsedText, isLatex) = Self.parseLatex(text: text.string)
-        return isLatex ? .latex(text: parsedText) : .text(text: parsedText)
+        let segments = Self.parseLatex(text: text.string)
+        return .segments(segments)
     case let inlineAttributes as Markdown.InlineAttributes:
       let children = inlineAttributes.inlineChildren.map { inlineMarkupContent(markup: $0) }
       return .inlineAttributes(attributes: inlineAttributes.attributes, children: Array(children))
@@ -150,34 +150,52 @@ public enum MarkdownViewParser {
     }
   }
     
-    private static func parseLatex(text: String) -> (String, Bool) {
-        // Quick check before regex
+    private static func parseLatex(text: String) -> [MarkdownSegment] {
+        
         if !text.contains("$") && !text.contains("\\") {
-            return (text, false)
+            return [.text(text: text)]
         }
         
-        // Common LaTeX delimiters patterns
-        let patterns = [
-            // Display math mode
-            #"\$\$(.*?)\$\$"#,           // $$...$$
-            #"\\\[(.*?)\\\]"#,           // \[...\]
+        let patterns: [(String, MarkdownSegmentType)] = [
+            (#"\$\$(.*?)\$\$"#, .latex),           // $$...$$
+            (#"\\\[(.*?)\\\]"#, .latex),           // \[...\]
             
-            // Equation environments
-            #"\\begin\{equation\*?\}(.*?)\\end\{equation\*?\}"#,  // \begin{equation}...\end{equation}
-            #"\\begin\{align\*?\}(.*?)\\end\{align\*?\}"#,        // \begin{align}...\end{align}
+            (#"\\begin\{equation\*?\}(.*?)\\end\{equation\*?\}"#, .latex),  // \begin{equation}...\end{equation}
+            (#"\\begin\{align\*?\}(.*?)\\end\{align\*?\}"#, .latex),        // \begin{align}...\end{align}
             
-            // Inline math mode
-//            #"\$(.*?)\$"#,               // $...$
-            #"\\\((.*?)\\\)"#            // \(...\)
+            (#"\\\((.*?)\\\)"#, .latex)            // \(...\)
         ]
         
-        // Check each pattern
-        for pattern in patterns {
-            if let _ = text.range(of: pattern, options: [.regularExpression, .caseInsensitive]) {
-                return (text, true)
+        var segments: [MarkdownSegment] = []
+        var remainingText = text
+        
+        while !remainingText.isEmpty {
+            var foundMatch = false
+            
+            for (pattern, segmentType) in patterns {
+                if let range = remainingText.range(of: pattern, options: [.regularExpression, .caseInsensitive]) {
+                    
+                    let prefix = String(remainingText[..<range.lowerBound])
+                    if !prefix.isEmpty {
+                        segments.append(.text(text: prefix))
+                    }
+                    
+                    let latexContent = String(remainingText[range])
+                    segments.append(.latex(text: latexContent))
+                    
+                    remainingText = String(remainingText[range.upperBound...])
+                    foundMatch = true
+                    break
+                }
+            }
+            
+            if !foundMatch {
+                segments.append(.text(text: remainingText))
+                remainingText = ""
             }
         }
         
-        return (text, false)
+        return segments
     }
+
 }

@@ -21,13 +21,13 @@ public enum MultiContentParser {
 
         for content in contents {
             switch content {
-            case .text(let text):
-                let attributedString = createHighlightedString(
-                    text: text,
-                    highlightedText: searchText,
-                    baseContainer: container
-                )
-                multiContents.append(.attributedString(attributedString))
+        case .text(let text):
+            let attributedString = createHighlightedString(
+                text: text,
+                highlightedText: searchText,
+                baseContainer: container
+            )
+            multiContents.append(.attributedString(attributedString))
       case .strong(let children):
         var container = container
         container.font = .bold(container.font ?? .body)()
@@ -94,8 +94,20 @@ public enum MultiContentParser {
         continue
       case .inlineHTML(let html):
         multiContents.append(.inlineHTML(html: html, link: container.link))
-      case .latex(let text):
-        multiContents.append(.latex(text))
+        case .segments(let segments):
+            for segment in segments {
+                switch segment {
+                case .text(let text):
+                    let attributedString = createHighlightedString(
+                        text: text,
+                        highlightedText: searchText,
+                        baseContainer: container
+                    )
+                    multiContents.append(.attributedString(attributedString))
+                case .latex(let text):
+                    multiContents.append(.latex(text))
+                }
+            }
       }
     }
 
